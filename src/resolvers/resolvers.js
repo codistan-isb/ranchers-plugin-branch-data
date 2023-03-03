@@ -1,7 +1,7 @@
 import ObjectID from "mongodb";
 export default {
     Mutation: {
-        createBranch: async (parent, { input }, context, info) => {
+        async createBranch(parent, { input }, context, info) {
             console.log(input)
             const { BranchData } = context.collections;
             const result = await BranchData.insertOne(input);
@@ -27,7 +27,32 @@ export default {
             }
 
             return branch;
+        },
+
+        async updateBranchData(parent, { branchname, input }, context, info) {
+            const { BranchData } = context.collections;
+            // const { branchname, input } = args
+            const branch = await BranchData.findOne({ branchname });
+
+            if (!branch) {
+                throw new Error(`Branch "${branchname}" not found`);
+            }
+
+            const updatedBranch = {
+                ...branch,
+                ...input
+            };
+
+            const UpdatedBranchDataResp = await BranchData.updateOne({ _id: branch._id }, { $set: updatedBranch });
+            console.log(UpdatedBranchDataResp)
+            // Ensure that branchname is never null
+            if (updatedBranch.branchname === null) {
+                updatedBranch.branchname = '';
+            }
+
+            return updatedBranch;
         }
+
 
     },
     Query: {

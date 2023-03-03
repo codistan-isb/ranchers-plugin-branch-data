@@ -4,7 +4,11 @@ type Branch {
   branchaddress: String!
   branchphonenumber: String!
 }
-
+input UpdateBranchDataInput {
+  branchname: String
+  branchaddress: String
+  branchphonenumber: String
+}
 input CreateBranchInput {
   branchname: String!
   branchaddress: String!
@@ -14,6 +18,7 @@ input CreateBranchInput {
 type Mutation {
   createBranch(input: CreateBranchInput!): Branch
   deleteBranch(branchname: String!): Branch
+  updateBranchData(branchname: String!, input: UpdateBranchDataInput): Branch
 }
 
 type Query {
