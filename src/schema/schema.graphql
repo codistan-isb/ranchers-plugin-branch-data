@@ -1,24 +1,20 @@
-type Order {
+type Branch {
   id: ID!
-  startTime: String!
-  endTime: String!
-  status: String
+  branchname: String!
+  branchaddress: String!
+  branchphonenumber: String!
 }
-input NewRiderOrderInput {
-  startTime: String!
-  endTime: String!
-  status: String
-}
-type Mutation {
-  createRiderOrder(orders: [NewRiderOrderInput]!): [Order!]!
 
-  updateRiderOrder(
-    id: ID!
-    startTime: String
-    endTime: String
-    status: String
-  ): Order
+input CreateBranchInput {
+  branchname: String!
+  branchaddress: String!
+  branchphonenumber: String!
 }
+
+type Mutation {
+  createBranch(input: CreateBranchInput!): Branch!
+}
+
 type Query {
-  getOrderById(id: ID!): Order
+  branches: [Branch!]!
 }

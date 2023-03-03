@@ -1,8 +1,8 @@
 {
-  "name": "@shoaibfarooq3/api-plugin-ranchers-create-order",
+  "name": "@shoaibfarooq3/api-plugin-branch-data",
   "description": "Boilerplate plugin for the Reaction API",
-  "label": "Create Order Plugin",
-  "version": "3.4.9-development",
+  "label": "Create Branch Plugin",
+  "version": "3.0.0-development",
   "main": "index.js",
   "type": "module",
   "engines": {
