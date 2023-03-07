@@ -2,7 +2,7 @@
   "name": "@shoaibfarooq3/api-plugin-branch-data",
   "description": "Boilerplate plugin for the Reaction API",
   "label": "Create Branch Plugin",
-  "version": "3.0.0-development",
+  "version": "3.1.4-development",
   "main": "index.js",
   "type": "module",
   "engines": {
