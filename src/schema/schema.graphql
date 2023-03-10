@@ -18,7 +18,7 @@ input UpdateBranchDataInput {
   branchaddress: String
   branchphonenumber: String
   branchLat: Float
-  longitude: Float
+  branchLong: Float
   branchCity: String
   branchDescription: String
   branchSector: String
@@ -30,7 +30,7 @@ input CreateBranchInput {
   branchaddress: String!
   branchphonenumber: String!
   branchLat: Float
-  longitude: Float
+  branchLong: Float
   branchCity: String
   branchDescription: String
   branchSector: String
