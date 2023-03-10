@@ -1,24 +1,40 @@
 type Branch {
   _id: ID!
   branchname: String!
-  branchaddress: [BranchAddress]!
+  branchaddress: String!
   branchphonenumber: String!
-  latitude: Float
-  longitude: Float
+  branchLat: Float
+  branchLong: Float
+  branchCity: String
+  branchDescription: String
+  createdAt: String
+  updatedAt: String
+  branchSector: String
+  branchTiming: String
 }
+
 input UpdateBranchDataInput {
   branchname: String
-  branchaddress: [UpdateBranchAddressInput]
+  branchaddress: String
   branchphonenumber: String
-  latitude: Float
+  branchLat: Float
   longitude: Float
+  branchCity: String
+  branchDescription: String
+  branchSector: String
+  branchTiming: String
 }
+
 input CreateBranchInput {
   branchname: String!
-  branchaddress: [CreateBranchAddressInput]!
+  branchaddress: String!
   branchphonenumber: String!
-  latitude: Float
+  branchLat: Float
   longitude: Float
+  branchCity: String
+  branchDescription: String
+  branchSector: String
+  branchTiming: String
 }
 
 type Mutation {
@@ -30,21 +46,4 @@ type Mutation {
 type Query {
   branches: [Branch]
   getBranchByName(branchname: String!): Branch
-}
-
-type BranchAddress {
-  branchstreet: String!
-  branchcity: String!
-  branchstate: String!
-}
-
-input UpdateBranchAddressInput {
-  branchstreet: String
-  branchcity: String
-  branchstate: String
-}
-input CreateBranchAddressInput {
-  branchstreet: String!
-  branchcity: String!
-  branchstate: String!
 }
