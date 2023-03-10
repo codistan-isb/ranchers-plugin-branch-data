@@ -3,16 +3,22 @@ type Branch {
   branchname: String!
   branchaddress: String!
   branchphonenumber: String!
+  latitude: Float
+  longitude: Float
 }
 input UpdateBranchDataInput {
   branchname: String
   branchaddress: String
   branchphonenumber: String
+  latitude: Float
+  longitude: Float
 }
 input CreateBranchInput {
   branchname: String!
   branchaddress: String!
   branchphonenumber: String!
+  latitude: Float
+  longitude: Float
 }
 
 type Mutation {
