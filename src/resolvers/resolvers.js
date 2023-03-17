@@ -2,6 +2,10 @@ import ObjectID from "mongodb";
 export default {
     Mutation: {
         async createBranch(parent, { input }, context, info) {
+            console.log(context.user);
+            if (context.user === undefined || context.user === null) {
+                throw new Error("Unauthorized access. Please login first");
+            }
             console.log(input)
             const { BranchData } = context.collections;
             const result = await BranchData.insertOne(input);
@@ -11,6 +15,10 @@ export default {
             return result.ops[0];
         },
         async deleteBranch(parent, args, context, info) {
+            console.log(context.user);
+            if (context.user === undefined || context.user === null) {
+                throw new Error("Unauthorized access. Please login first");
+            }
             const { BranchData } = context.collections;
             const { branchname } = args
             const branch = await BranchData.findOne({ branchname });
@@ -30,6 +38,10 @@ export default {
         },
 
         async updateBranchData(parent, { branchname, input }, context, info) {
+            console.log(context.user);
+            if (context.user === undefined || context.user === null) {
+                throw new Error("Unauthorized access. Please login first");
+            }
             const { BranchData } = context.collections;
             // const { branchname, input } = args
             const branch = await BranchData.findOne({ branchname });
@@ -57,12 +69,20 @@ export default {
     },
     Query: {
         branches: async (parent, args, context, info) => {
+            console.log(context.user);
+            if (context.user === undefined || context.user === null) {
+                throw new Error("Unauthorized access. Please login first");
+            }
             const { BranchData } = context.collections;
             const branches = await BranchData.find().toArray();
             console.log(branches)
             return branches
         },
         async getBranchByName(parent, args, context, info) {
+            console.log(context.user);
+            if (context.user === undefined || context.user === null) {
+                throw new Error("Unauthorized access. Please login first");
+            }
             const { BranchData } = context.collections;
             const { branchname } = args
             const branch = await BranchData.findOne({ branchname });
@@ -73,6 +93,23 @@ export default {
             }
 
             return branch;
-        }
+        },
+        async getRiderCount(parent, args, context, info) {
+            console.log(context.user);
+            console.log(args);
+
+            if (context.user === undefined || context.user === null) {
+                throw new Error("Unauthorized access. Please login first");
+            }
+            const { branchname } = args;
+            const { users } = context.collections;
+            const bracnhRegex = new RegExp(`^${branchname}$`, 'i');
+            const roleRegex = new RegExp('^rider$', 'i');
+            // const db = dataSources.usersAPI.db;
+            console.log(roleRegex)
+            const usersDetail = await users.find({ branchname: bracnhRegex, userRole: { $regex: roleRegex } }).toArray();
+            console.log(usersDetail)
+            return usersDetail.length;
+        },
     },
 }

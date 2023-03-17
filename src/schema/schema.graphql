@@ -46,4 +46,5 @@ type Mutation {
 type Query {
   branches: [Branch]
   getBranchByName(branchname: String!): Branch
+  getRiderCount(branchname: String!): Int!
 }
