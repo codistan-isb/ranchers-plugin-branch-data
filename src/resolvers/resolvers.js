@@ -111,5 +111,6 @@ export default {
             console.log(usersDetail)
             return usersDetail.length;
         },
+     
     },
 }
