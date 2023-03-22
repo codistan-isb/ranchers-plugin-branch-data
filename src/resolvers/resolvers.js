@@ -111,6 +111,32 @@ export default {
             console.log(usersDetail)
             return usersDetail.length;
         },
-     
+        async getBranchByCityName(parent, args, context, info) {
+            console.log(context.user);
+            console.log(args)
+            if (context.user === undefined || context.user === null) {
+                throw new Error("Unauthorized access. Please login first");
+            }
+            const { BranchData } = context.collections;
+            const { branchCity } = args;
+            const branches = await BranchData.find({ branchCity: branchCity.toLowerCase() }).toArray();
+            console.log(branches)
+            return branches.map(branch => ({
+                _id: branch._id,
+                branchname: branch.branchname,
+                branchaddress: branch.branchaddress,
+                branchphonenumber: branch.branchphonenumber,
+                branchLat: branch.branchLat,
+                branchLong: branch.branchLong,
+                branchCity: branch.branchCity,
+                branchDescription: branch.branchDescription,
+                createdAt: branch.createdAt ? branch.createdAt.toISOString() : null,
+                updatedAt: branch.updatedAt ? branch.updatedAt.toISOString() : null,
+                branchSector: branch.branchSector,
+                branchTiming: branch.branchTiming,
+            }));
+
+        }
+
     },
 }

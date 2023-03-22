@@ -47,4 +47,5 @@ type Query {
   branches: [Branch]
   getBranchByName(branchname: String!): Branch
   getRiderCount(branchname: String!): Int!
+  getBranchByCityName(branchCity: String): [Branch]
 }
