@@ -64,8 +64,6 @@ export default {
 
             return updatedBranch;
         }
-
-
     },
     Query: {
         branches: async (parent, args, context, info) => {
@@ -119,7 +117,7 @@ export default {
             }
             const { BranchData } = context.collections;
             const { branchCity } = args;
-            const branches = await BranchData.find({ branchCity: branchCity.toLowerCase() }).toArray();
+            const branches = await BranchData.find({ branchCity: branchCity }).toArray();
             console.log(branches)
             return branches.map(branch => ({
                 _id: branch._id,
