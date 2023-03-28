@@ -3,6 +3,7 @@ export default {
     Mutation: {
         async createBranch(parent, { input }, context, info) {
             console.log(context.user);
+            console.log(input)
             if (context.user === undefined || context.user === null) {
                 throw new Error("Unauthorized access. Please login first");
             }
@@ -36,7 +37,6 @@ export default {
 
             return branch;
         },
-
         async updateBranchData(parent, { branchname, input }, context, info) {
             console.log(context.user);
             if (context.user === undefined || context.user === null) {
@@ -63,7 +63,7 @@ export default {
             }
 
             return updatedBranch;
-        }
+        },
     },
     Query: {
         branches: async (parent, args, context, info) => {
@@ -72,7 +72,7 @@ export default {
                 throw new Error("Unauthorized access. Please login first");
             }
             const { BranchData } = context.collections;
-            const branches = await BranchData.find().toArray();
+            const branches = await BranchData.find().sort({ createdAt: 1 }).toArray();
             console.log(branches)
             return branches
         },
@@ -135,6 +135,5 @@ export default {
             }));
 
         }
-
     },
 }

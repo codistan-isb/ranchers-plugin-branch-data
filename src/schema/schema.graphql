@@ -41,6 +41,7 @@ type Mutation {
   createBranch(input: CreateBranchInput!): Branch
   deleteBranch(branchname: String!): Branch
   updateBranchData(branchname: String!, input: UpdateBranchDataInput): Branch
+  # updateAdminAccount(UserRole: String): Boolean
 }
 
 type Query {
