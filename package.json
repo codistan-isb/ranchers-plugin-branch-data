@@ -2,7 +2,7 @@
   "name": "@shoaibfarooq3/ranchers-plugin-branch-data",
   "description": "Boilerplate plugin for the Reaction API",
   "label": "Create Branch Plugin",
-  "version": "6.0.0-development",
+  "version": "6.2.0-development",
   "main": "index.js",
   "type": "module",
   "engines": {

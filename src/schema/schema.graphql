@@ -1,52 +1,58 @@
 type Branch {
   _id: ID!
-  branchname: String!
-  branchaddress: String!
-  branchphonenumber: String!
-  branchLat: Float
-  branchLong: Float
-  branchCity: String
-  branchDescription: String
+  name: String!
+  address: String!
+  phoneNumber1: String
+  phoneNumber2: String
+  phoneNumber3: String
+  Latitude: Float
+  Longitude: Float
+  City: String
+  Description: String
   createdAt: String
   updatedAt: String
-  branchSector: String
-  branchTiming: String
+  Sector: String
+  Timing: String
 }
 
 input UpdateBranchDataInput {
-  branchname: String
-  branchaddress: String
-  branchphonenumber: String
-  branchLat: Float
-  branchLong: Float
-  branchCity: String
-  branchDescription: String
-  branchSector: String
-  branchTiming: String
+  name: String
+  address: String
+  phoneNumber1: String
+  phoneNumber2: String
+  phoneNumber3: String
+  Latitude: Float
+  Longitude: Float
+  City: String
+  Description: String
+  Sector: String
+  Timing: String
 }
 
 input CreateBranchInput {
-  branchname: String!
-  branchaddress: String!
-  branchphonenumber: String!
-  branchLat: Float
-  branchLong: Float
-  branchCity: String
-  branchDescription: String
-  branchSector: String
-  branchTiming: String
+  name: String!
+  address: String!
+  phoneNumber1: String
+  phoneNumber2: String
+  phoneNumber3: String
+  Latitude: Float
+  Longitude: Float
+  City: String
+  Description: String
+  Sector: String
+  Timing: String
 }
 
 type Mutation {
   createBranch(input: CreateBranchInput!): Branch
-  deleteBranch(branchname: String!): Branch
-  updateBranchData(branchname: String!, input: UpdateBranchDataInput): Branch
+  deleteBranch(name: String!): Branch
+  updateBranchData(name: String!, input: UpdateBranchDataInput): Branch
   # updateAdminAccount(UserRole: String): Boolean
 }
 
 type Query {
   branches: [Branch]
-  getBranchByName(branchname: String!): Branch
-  getRiderCount(branchname: String!): Int!
-  getBranchByCityName(branchCity: String): [Branch]
+  getBranchByName(name: String!): Branch
+  getRiderCount(name: String!): Int!
+  getBranchByCityName(City: String): [Branch]
 }

@@ -1,53 +1,66 @@
 import ObjectID from "mongodb";
+import checkDuplicateBranch from "../utils/checkDuplicateBranch.js";
 export default {
     Mutation: {
         async createBranch(parent, { input }, context, info) {
-            console.log(context.user);
-            console.log(input)
+            // console.log(context.user);
+            // console.log(input)
             if (context.user === undefined || context.user === null) {
                 throw new Error("Unauthorized access. Please login first");
             }
-            console.log(input)
+            // console.log(input)
             const { BranchData } = context.collections;
-            const result = await BranchData.insertOne(input);
-            // console.log(result.insertedId)
-            // console.log(result.ops[0])
-            // console.log(result.ops[0].branchname)
+            // console.log(BranchData)
+            const { name } = input;
+            const isDuplicate = await checkDuplicateBranch(name, BranchData);
+            console.log(isDuplicate)
+            if (isDuplicate == false) {
+                throw new Error("A branch with the same name already exists", {
+                    invalidArgs: "Branch Name",
+                });
+            }
+            const newBranch = {
+                ...input,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+            };
+            const result = await BranchData.insertOne(newBranch);
             return result.ops[0];
         },
         async deleteBranch(parent, args, context, info) {
             console.log(context.user);
+            console.log(args)
             if (context.user === undefined || context.user === null) {
                 throw new Error("Unauthorized access. Please login first");
             }
             const { BranchData } = context.collections;
-            const { branchname } = args
-            const branch = await BranchData.findOne({ branchname });
-
+            const { name } = args
+            const branch = await BranchData.findOne({ name });
+            console.log(branch)
             if (!branch) {
-                throw new Error(`Branch "${branchname}" not found`);
+                throw new Error(`Branch "${name}" not found`);
             }
 
             await BranchData.deleteOne({ _id: branch._id });
             console.log(BranchData)
             // Ensure that branchname is never null
-            if (branch.branchname === null) {
-                branch.branchname = '';
+            if (branch.name === null) {
+                branch.name = '';
             }
 
             return branch;
         },
-        async updateBranchData(parent, { branchname, input }, context, info) {
+        async updateBranchData(parent, { name, input }, context, info) {
             console.log(context.user);
             if (context.user === undefined || context.user === null) {
                 throw new Error("Unauthorized access. Please login first");
             }
             const { BranchData } = context.collections;
             // const { branchname, input } = args
-            const branch = await BranchData.findOne({ branchname });
+            const branch = await BranchData.findOne({ name });
 
             if (!branch) {
-                throw new Error(`Branch "${branchname}" not found`);
+                throw new Error(`Branch ${name} not found`);
             }
 
             const updatedBranch = {
@@ -74,7 +87,11 @@ export default {
             const { BranchData } = context.collections;
             const branches = await BranchData.find().sort({ createdAt: 1 }).toArray();
             console.log(branches)
-            return branches
+            const cleanedBranches = branches.map(branch => ({
+                ...branch,
+                name: branch.name ?? null,
+            }));
+            return cleanedBranches
         },
         async getBranchByName(parent, args, context, info) {
             console.log(context.user);
@@ -82,30 +99,30 @@ export default {
                 throw new Error("Unauthorized access. Please login first");
             }
             const { BranchData } = context.collections;
-            const { branchname } = args
-            const branch = await BranchData.findOne({ branchname });
+            const { name } = args
+            const branch = await BranchData.findOne({ name });
             console.log(branch)
-            // Ensure that branchname is never null
-            if (branch && branch.branchname === null) {
-                branch.branchname = '';
+            // Handle null values for the _id field
+            if (!branch) {
+                throw new Error(`Branch '${name}' not found`);
             }
-
+            branch._id = branch._id.toString();
+            return branch;
             return branch;
         },
         async getRiderCount(parent, args, context, info) {
             console.log(context.user);
             console.log(args);
-
             if (context.user === undefined || context.user === null) {
                 throw new Error("Unauthorized access. Please login first");
             }
-            const { branchname } = args;
+            const { name } = args;
             const { users } = context.collections;
-            const bracnhRegex = new RegExp(`^${branchname}$`, 'i');
+            const bracnhRegex = new RegExp(`^${name}$`, 'i');
             const roleRegex = new RegExp('^rider$', 'i');
             // const db = dataSources.usersAPI.db;
             console.log(roleRegex)
-            const usersDetail = await users.find({ branchname: bracnhRegex, userRole: { $regex: roleRegex } }).toArray();
+            const usersDetail = await users.find({ name: bracnhRegex, userRole: { $regex: roleRegex } }).toArray();
             console.log(usersDetail)
             return usersDetail.length;
         },
@@ -116,22 +133,24 @@ export default {
                 throw new Error("Unauthorized access. Please login first");
             }
             const { BranchData } = context.collections;
-            const { branchCity } = args;
-            const branches = await BranchData.find({ branchCity: branchCity }).toArray();
+            const { City } = args;
+            const branches = await BranchData.find({ City: City }).toArray();
             console.log(branches)
             return branches.map(branch => ({
                 _id: branch._id,
-                branchname: branch.branchname,
-                branchaddress: branch.branchaddress,
-                branchphonenumber: branch.branchphonenumber,
-                branchLat: branch.branchLat,
-                branchLong: branch.branchLong,
-                branchCity: branch.branchCity,
-                branchDescription: branch.branchDescription,
-                createdAt: branch.createdAt ? branch.createdAt.toISOString() : null,
-                updatedAt: branch.updatedAt ? branch.updatedAt.toISOString() : null,
-                branchSector: branch.branchSector,
-                branchTiming: branch.branchTiming,
+                name: branch.name,
+                address: branch.address,
+                phoneNumber1: branch.phoneNumber1,
+                phoneNumber2: branch.phoneNumber2,
+                phoneNumber3: branch.phoneNumber3,
+                Latitude: branch.Latitude,
+                Longitude: branch.Longitude,
+                City: branch.City,
+                Description: branch.Description,
+                createdAt: branch.createdAt instanceof Date ? branch.createdAt.toISOString() : null,
+                updatedAt: branch.updatedAt instanceof Date ? branch.updatedAt.toISOString() : null,
+                Sector: branch.Sector,
+                Timing: branch.Timing,
             }));
 
         }
