@@ -13,6 +13,7 @@ type Branch {
   updatedAt: String
   Sector: String
   Timing: String
+  deliveryArea: String
 }
 
 input UpdateBranchDataInput {
@@ -27,6 +28,7 @@ input UpdateBranchDataInput {
   Description: String
   Sector: String
   Timing: String
+  deliveryArea: String
 }
 
 input CreateBranchInput {
@@ -41,6 +43,7 @@ input CreateBranchInput {
   Description: String
   Sector: String
   Timing: String
+  deliveryArea: String
 }
 
 type Mutation {

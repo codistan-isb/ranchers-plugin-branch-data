@@ -71,8 +71,8 @@ export default {
             const UpdatedBranchDataResp = await BranchData.updateOne({ _id: branch._id }, { $set: updatedBranch });
             console.log(UpdatedBranchDataResp)
             // Ensure that branchname is never null
-            if (updatedBranch.branchname === null) {
-                updatedBranch.branchname = '';
+            if (updatedBranch.name === null) {
+                updatedBranch.name = '';
             }
 
             return updatedBranch;
@@ -107,7 +107,6 @@ export default {
                 throw new Error(`Branch '${name}' not found`);
             }
             branch._id = branch._id.toString();
-            return branch;
             return branch;
         },
         async getRiderCount(parent, args, context, info) {
@@ -151,6 +150,7 @@ export default {
                 updatedAt: branch.updatedAt instanceof Date ? branch.updatedAt.toISOString() : null,
                 Sector: branch.Sector,
                 Timing: branch.Timing,
+                deliveryArea: branch.deliveryArea,
             }));
 
         }
