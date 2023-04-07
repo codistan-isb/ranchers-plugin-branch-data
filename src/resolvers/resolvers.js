@@ -81,9 +81,9 @@ export default {
     Query: {
         branches: async (parent, args, context, info) => {
             console.log(context.user);
-            if (context.user === undefined || context.user === null) {
-                throw new Error("Unauthorized access. Please login first");
-            }
+            // if (context.user === undefined || context.user === null) {
+            //     throw new Error("Unauthorized access. Please login first");
+            // }
             const { BranchData } = context.collections;
             const branches = await BranchData.find().sort({ createdAt: 1 }).toArray();
             console.log(branches)
@@ -153,6 +153,7 @@ export default {
                 deliveryArea: branch.deliveryArea,
             }));
 
-        }
+        },
+
     },
 }
