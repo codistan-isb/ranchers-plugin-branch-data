@@ -3,7 +3,7 @@ import checkDuplicateBranch from "../utils/checkDuplicateBranch.js";
 export default {
     Mutation: {
         async createBranch(parent, { input }, context, info) {
-            // console.log(context.user);
+            console.log(context.user);
             // console.log(input)
             if (context.user === undefined || context.user === null) {
                 throw new Error("Unauthorized access. Please login first");
@@ -19,6 +19,7 @@ export default {
                     invalidArgs: "Branch Name",
                 });
             }
+            console.log(new Date().toISOString())
             const newBranch = {
                 ...input,
                 createdAt: new Date().toISOString(),
@@ -95,9 +96,9 @@ export default {
         },
         async getBranchByName(parent, args, context, info) {
             console.log(context.user);
-            if (context.user === undefined || context.user === null) {
-                throw new Error("Unauthorized access. Please login first");
-            }
+            // if (context.user === undefined || context.user === null) {
+            //     throw new Error("Unauthorized access. Please login first");
+            // }
             const { BranchData } = context.collections;
             const { name } = args
             const branch = await BranchData.findOne({ name });
@@ -112,9 +113,9 @@ export default {
         async getRiderCount(parent, args, context, info) {
             console.log(context.user);
             console.log(args);
-            if (context.user === undefined || context.user === null) {
-                throw new Error("Unauthorized access. Please login first");
-            }
+            // if (context.user === undefined || context.user === null) {
+            //     throw new Error("Unauthorized access. Please login first");
+            // }
             const { name } = args;
             const { users } = context.collections;
             const bracnhRegex = new RegExp(`^${name}$`, 'i');
@@ -128,9 +129,9 @@ export default {
         async getBranchByCityName(parent, args, context, info) {
             console.log(context.user);
             console.log(args)
-            if (context.user === undefined || context.user === null) {
-                throw new Error("Unauthorized access. Please login first");
-            }
+            // if (context.user === undefined || context.user === null) {
+            //     throw new Error("Unauthorized access. Please login first");
+            // }
             const { BranchData } = context.collections;
             const { City } = args;
             const branches = await BranchData.find({ City: City }).toArray();
@@ -154,6 +155,5 @@ export default {
             }));
 
         },
-
     },
 }
