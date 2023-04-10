@@ -66,9 +66,10 @@ export default {
 
             const updatedBranch = {
                 ...branch,
-                ...input
+                ...input,
+                updatedAt: new Date().toISOString(),
             };
-
+            console.log("updated Branch Data: ", updatedBranch)
             const UpdatedBranchDataResp = await BranchData.updateOne({ _id: branch._id }, { $set: updatedBranch });
             console.log(UpdatedBranchDataResp)
             // Ensure that branchname is never null
@@ -82,6 +83,7 @@ export default {
     Query: {
         branches: async (parent, args, context, info) => {
             console.log(context.user);
+            console.log(new Date().toISOString())
             // if (context.user === undefined || context.user === null) {
             //     throw new Error("Unauthorized access. Please login first");
             // }
@@ -92,6 +94,7 @@ export default {
                 ...branch,
                 name: branch.name ?? null,
             }));
+            console.log(cleanedBranches)
             return cleanedBranches
         },
         async getBranchByName(parent, args, context, info) {
