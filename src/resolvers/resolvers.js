@@ -1,12 +1,13 @@
 import ObjectID from "mongodb";
 import checkDuplicateBranch from "../utils/checkDuplicateBranch.js";
+import ReactionError from "@reactioncommerce/reaction-error";
 export default {
     Mutation: {
         async createBranch(parent, { input }, context, info) {
             console.log(context.user);
             // console.log(input)
             if (context.user === undefined || context.user === null) {
-                throw new Error("Unauthorized access. Please login first");
+                throw new ReactionError("access-denied", "Please login first");
             }
             // console.log(input)
             const { BranchData } = context.collections;
@@ -15,9 +16,7 @@ export default {
             const isDuplicate = await checkDuplicateBranch(name, BranchData);
             console.log(isDuplicate)
             if (isDuplicate == false) {
-                throw new Error("A branch with the same name already exists", {
-                    invalidArgs: "Branch Name",
-                });
+                throw new ReactionError("A branch with the same name already exists", "Branch Name");
             }
             console.log(new Date().toISOString())
             const newBranch = {
@@ -32,14 +31,14 @@ export default {
             console.log(context.user);
             console.log(args)
             if (context.user === undefined || context.user === null) {
-                throw new Error("Unauthorized access. Please login first");
+                throw new ReactionError("access-denied", "Please login first");
             }
             const { BranchData } = context.collections;
             const { name } = args
             const branch = await BranchData.findOne({ name });
             console.log(branch)
             if (!branch) {
-                throw new Error(`Branch "${name}" not found`);
+                throw new ReactionError(`Branch "${name}" not found`);
             }
 
             await BranchData.deleteOne({ _id: branch._id });
@@ -54,14 +53,14 @@ export default {
         async updateBranchData(parent, { name, input }, context, info) {
             console.log(context.user);
             if (context.user === undefined || context.user === null) {
-                throw new Error("Unauthorized access. Please login first");
+                throw new ReactionError("access-denied", "Please login first");
             }
             const { BranchData } = context.collections;
             // const { branchname, input } = args
             const branch = await BranchData.findOne({ name });
 
             if (!branch) {
-                throw new Error(`Branch ${name} not found`);
+                throw new ReactionError(`Branch "${name}" not found`);
             }
 
             const updatedBranch = {
@@ -108,7 +107,7 @@ export default {
             console.log(branch)
             // Handle null values for the _id field
             if (!branch) {
-                throw new Error(`Branch '${name}' not found`);
+                throw new ReactionError(`Branch "${name}" not found`);
             }
             branch._id = branch._id.toString();
             return branch;
