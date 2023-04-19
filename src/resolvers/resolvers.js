@@ -87,7 +87,7 @@ export default {
             //     throw new Error("Unauthorized access. Please login first");
             // }
             const { BranchData } = context.collections;
-            const branches = await BranchData.find().sort({ createdAt: 1 }).toArray();
+            const branches = await BranchData.find().sort({ createdAt: -1 }).toArray();
             console.log(branches)
             const cleanedBranches = branches.map(branch => ({
                 ...branch,
@@ -103,7 +103,7 @@ export default {
             // }
             const { BranchData } = context.collections;
             const { name } = args
-            const branch = await BranchData.findOne({ name });
+            const branch = await BranchData.findOne({ name }).sort({ createdAt: -1 });
             console.log(branch)
             // Handle null values for the _id field
             if (!branch) {
@@ -124,7 +124,7 @@ export default {
             const roleRegex = new RegExp('^rider$', 'i');
             // const db = dataSources.usersAPI.db;
             console.log(roleRegex)
-            const usersDetail = await users.find({ name: bracnhRegex, userRole: { $regex: roleRegex } }).toArray();
+            const usersDetail = await users.find({ name: bracnhRegex, userRole: { $regex: roleRegex } }).sort({ createdAt: -1 }).toArray();
             console.log(usersDetail)
             return usersDetail.length;
         },
@@ -136,7 +136,7 @@ export default {
             // }
             const { BranchData } = context.collections;
             const { City } = args;
-            const branches = await BranchData.find({ City: City }).toArray();
+            const branches = await BranchData.find({ City: City }).sort({ createdAt: -1 }).toArray();
             console.log(branches)
             return branches.map(branch => ({
                 _id: branch._id,
