@@ -14,9 +14,15 @@ type Branch {
   Sector: String
   Timing: String
   deliveryArea: String
+  taxRate: taxRateOutput
 }
 
+type taxRateOutput {
+  card: Float
+  cash: Float
+}
 input UpdateBranchDataInput {
+  # _id: ID!
   name: String
   address: String
   phoneNumber1: String
@@ -29,6 +35,7 @@ input UpdateBranchDataInput {
   Sector: String
   Timing: String
   deliveryArea: String
+  taxRate: taxRateInput
 }
 
 input CreateBranchInput {
@@ -44,12 +51,17 @@ input CreateBranchInput {
   Sector: String
   Timing: String
   deliveryArea: String
+  taxRate: taxRateInput
+}
+input taxRateInput {
+  card: Float
+  cash: Float
 }
 
 type Mutation {
   createBranch(input: CreateBranchInput!): Branch
-  deleteBranch(name: String!): Branch
-  updateBranchData(name: String!, input: UpdateBranchDataInput): Branch
+  deleteBranch(_id: ID!): Boolean
+  updateBranchData(_id: ID!, input: UpdateBranchDataInput): Branch
   # updateAdminAccount(UserRole: String): Boolean
 }
 

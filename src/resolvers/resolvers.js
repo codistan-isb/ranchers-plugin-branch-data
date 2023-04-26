@@ -16,7 +16,8 @@ export default {
             const isDuplicate = await checkDuplicateBranch(name, BranchData);
             console.log(isDuplicate)
             if (isDuplicate == false) {
-                throw new ReactionError("A branch with the same name already exists", "Branch Name");
+                throw new ReactionError("conflict", "A branch with the same name already exists");
+                // throw new ReactionError("A branch with the same name already exists", "Branch Name");
             }
             console.log(new Date().toISOString())
             const newBranch = {
@@ -34,33 +35,36 @@ export default {
                 throw new ReactionError("access-denied", "Please login first");
             }
             const { BranchData } = context.collections;
-            const { name } = args
-            const branch = await BranchData.findOne({ name });
-            console.log(branch)
+            const { _id } = args
+            const branch = await BranchData.findOneAndDelete({ _id: new ObjectID.ObjectId(_id) });
+
+            // const branch = await BranchData.findOne({ name });
+            console.log("branch", branch)
             if (!branch) {
-                throw new ReactionError(`Branch "${name}" not found`);
+                throw new ReactionError("not-found", `Branch "${_id} " not found`);
             }
 
-            await BranchData.deleteOne({ _id: branch._id });
-            console.log(BranchData)
-            // Ensure that branchname is never null
+            // await BranchData.deleteOne({ _id: branch._id });
+            // console.log(BranchData)
+            // // Ensure that branchname is never null
             if (branch.name === null) {
                 branch.name = '';
             }
 
-            return branch;
+            return true;
         },
-        async updateBranchData(parent, { name, input }, context, info) {
+        async updateBranchData(parent, { _id, input }, context, info) {
             console.log(context.user);
+            console.log(_id)
             if (context.user === undefined || context.user === null) {
                 throw new ReactionError("access-denied", "Please login first");
             }
             const { BranchData } = context.collections;
             // const { branchname, input } = args
-            const branch = await BranchData.findOne({ name });
-
+            const branch = await BranchData.findOne({ _id: new ObjectID.ObjectId(_id) });
+            console.log("Branch Data:- ", branch)
             if (!branch) {
-                throw new ReactionError(`Branch "${name}" not found`);
+                throw new ReactionError("not-found", `Branch "${_id}" not found`);
             }
 
             const updatedBranch = {
