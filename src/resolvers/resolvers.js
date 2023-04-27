@@ -2,6 +2,22 @@ import ObjectID from "mongodb";
 import checkDuplicateBranch from "../utils/checkDuplicateBranch.js";
 import ReactionError from "@reactioncommerce/reaction-error";
 export default {
+    Branch: {
+        async taxInfo(parent, args, context, info) {
+            console.log("parent", parent);
+            console.log(parent.taxID);
+            if (parent.taxID) {
+                const { TaxRate } = context.collections;
+                const taxDataResponse = await TaxRate.find({
+                    _id: ObjectID.ObjectId(parent.taxID),
+                }).toArray();
+                console.log("Tax Data : ", taxDataResponse[0])
+                return taxDataResponse[0];
+            } else {
+                return [];
+            }
+        }
+    },
     Mutation: {
         async createBranch(parent, { input }, context, info) {
             console.log(context.user);
@@ -150,87 +166,87 @@ export default {
             // if (TaxRateDeleteResp.value !== null || TaxRateDeleteResp.value !== undefined) {
             //     throw new ReactionError("not-found", "Tax region not found");
             // }
-             return true 
+            return true
 
-    }
-},
-Query: {
-    branches: async (parent, args, context, info) => {
-        console.log(context.user);
-        console.log(new Date().toISOString())
-        // if (context.user === undefined || context.user === null) {
-        //     throw new Error("Unauthorized access. Please login first");
-        // }
-        const { BranchData } = context.collections;
-        const branches = await BranchData.find().sort({ createdAt: -1 }).toArray();
-        console.log(branches)
-        const cleanedBranches = branches.map(branch => ({
-            ...branch,
-            name: branch.name ?? null,
-        }));
-        console.log(cleanedBranches)
-        return cleanedBranches
-    },
-        async getBranchByName(parent, args, context, info) {
-        console.log(context.user);
-        // if (context.user === undefined || context.user === null) {
-        //     throw new Error("Unauthorized access. Please login first");
-        // }
-        const { BranchData } = context.collections;
-        const { name } = args
-        const branch = await BranchData.findOne({ name }).sort({ createdAt: -1 });
-        console.log(branch)
-        // Handle null values for the _id field
-        if (!branch) {
-            throw new ReactionError(`Branch "${name}" not found`);
         }
-        branch._id = branch._id.toString();
-        return branch;
     },
+    Query: {
+        branches: async (parent, args, context, info) => {
+            console.log(context.user);
+            console.log(new Date().toISOString())
+            // if (context.user === undefined || context.user === null) {
+            //     throw new Error("Unauthorized access. Please login first");
+            // }
+            const { BranchData } = context.collections;
+            const branches = await BranchData.find().sort({ createdAt: -1 }).toArray();
+            console.log(branches)
+            const cleanedBranches = branches.map(branch => ({
+                ...branch,
+                name: branch.name ?? null,
+            }));
+            console.log(cleanedBranches)
+            return cleanedBranches
+        },
+        async getBranchByName(parent, args, context, info) {
+            console.log(context.user);
+            // if (context.user === undefined || context.user === null) {
+            //     throw new Error("Unauthorized access. Please login first");
+            // }
+            const { BranchData } = context.collections;
+            const { name } = args
+            const branch = await BranchData.findOne({ name }).sort({ createdAt: -1 });
+            console.log(branch)
+            // Handle null values for the _id field
+            if (!branch) {
+                throw new ReactionError(`Branch "${name}" not found`);
+            }
+            branch._id = branch._id.toString();
+            return branch;
+        },
         async getRiderCount(parent, args, context, info) {
-        console.log(context.user);
-        console.log(args);
-        // if (context.user === undefined || context.user === null) {
-        //     throw new Error("Unauthorized access. Please login first");
-        // }
-        const { name } = args;
-        const { users } = context.collections;
-        const bracnhRegex = new RegExp(`^${name}$`, 'i');
-        const roleRegex = new RegExp('^rider$', 'i');
-        // const db = dataSources.usersAPI.db;
-        console.log(roleRegex)
-        const usersDetail = await users.find({ name: bracnhRegex, userRole: { $regex: roleRegex } }).sort({ createdAt: -1 }).toArray();
-        console.log(usersDetail)
-        return usersDetail.length;
-    },
+            console.log(context.user);
+            console.log(args);
+            // if (context.user === undefined || context.user === null) {
+            //     throw new Error("Unauthorized access. Please login first");
+            // }
+            const { name } = args;
+            const { users } = context.collections;
+            const bracnhRegex = new RegExp(`^${name}$`, 'i');
+            const roleRegex = new RegExp('^rider$', 'i');
+            // const db = dataSources.usersAPI.db;
+            console.log(roleRegex)
+            const usersDetail = await users.find({ name: bracnhRegex, userRole: { $regex: roleRegex } }).sort({ createdAt: -1 }).toArray();
+            console.log(usersDetail)
+            return usersDetail.length;
+        },
         async getBranchByCityName(parent, args, context, info) {
-        console.log(context.user);
-        console.log(args)
-        // if (context.user === undefined || context.user === null) {
-        //     throw new Error("Unauthorized access. Please login first");
-        // }
-        const { BranchData } = context.collections;
-        const { City } = args;
-        const branches = await BranchData.find({ City: City }).sort({ createdAt: -1 }).toArray();
-        console.log(branches)
-        return branches.map(branch => ({
-            _id: branch._id,
-            name: branch.name,
-            address: branch.address,
-            phoneNumber1: branch.phoneNumber1,
-            phoneNumber2: branch.phoneNumber2,
-            phoneNumber3: branch.phoneNumber3,
-            Latitude: branch.Latitude,
-            Longitude: branch.Longitude,
-            City: branch.City,
-            Description: branch.Description,
-            createdAt: branch.createdAt instanceof Date ? branch.createdAt.toISOString() : null,
-            updatedAt: branch.updatedAt instanceof Date ? branch.updatedAt.toISOString() : null,
-            Sector: branch.Sector,
-            Timing: branch.Timing,
-            deliveryArea: branch.deliveryArea,
-        }));
+            console.log(context.user);
+            console.log(args)
+            // if (context.user === undefined || context.user === null) {
+            //     throw new Error("Unauthorized access. Please login first");
+            // }
+            const { BranchData } = context.collections;
+            const { City } = args;
+            const branches = await BranchData.find({ City: City }).sort({ createdAt: -1 }).toArray();
+            console.log(branches)
+            return branches.map(branch => ({
+                _id: branch._id,
+                name: branch.name,
+                address: branch.address,
+                phoneNumber1: branch.phoneNumber1,
+                phoneNumber2: branch.phoneNumber2,
+                phoneNumber3: branch.phoneNumber3,
+                Latitude: branch.Latitude,
+                Longitude: branch.Longitude,
+                City: branch.City,
+                Description: branch.Description,
+                createdAt: branch.createdAt instanceof Date ? branch.createdAt.toISOString() : null,
+                updatedAt: branch.updatedAt instanceof Date ? branch.updatedAt.toISOString() : null,
+                Sector: branch.Sector,
+                Timing: branch.Timing,
+                deliveryArea: branch.deliveryArea,
+            }));
 
+        },
     },
-},
 }
