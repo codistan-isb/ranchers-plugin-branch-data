@@ -14,13 +14,13 @@ type Branch {
   Sector: String
   Timing: String
   deliveryArea: String
-  taxRate: taxRateOutput
+  # taxRate: taxRateOutput
 }
 
-type taxRateOutput {
-  card: Float
-  cash: Float
-}
+# type taxRateOutput {
+#   card: Float
+#   cash: Float
+# }
 input UpdateBranchDataInput {
   # _id: ID!
   name: String
@@ -35,7 +35,7 @@ input UpdateBranchDataInput {
   Sector: String
   Timing: String
   deliveryArea: String
-  taxRate: taxRateInput
+  # taxRate: taxRateInput
 }
 
 input CreateBranchInput {
@@ -51,11 +51,24 @@ input CreateBranchInput {
   Sector: String
   Timing: String
   deliveryArea: String
-  taxRate: taxRateInput
+  # taxRate: taxRateInput
+}
+# input taxRateInput {
+#   card: Float
+#   cash: Float
+# }
+type taxRate {
+  _id: ID
+  Label: String
+  Region: String
+  Cash: Float
+  Card: Float
 }
 input taxRateInput {
-  card: Float
-  cash: Float
+  Label: String
+  Region: String
+  Cash: Float
+  Card: Float
 }
 
 type Mutation {
@@ -63,6 +76,15 @@ type Mutation {
   deleteBranch(_id: ID!): Boolean
   updateBranchData(_id: ID!, input: UpdateBranchDataInput): Branch
   # updateAdminAccount(UserRole: String): Boolean
+  createTax(input: taxRateInput): taxRate
+  updateTax(
+    _id: ID
+    Label: String
+    Region: String
+    Cash: Float
+    Card: Float
+  ): taxRate
+  deleteTax(_id: ID): Boolean
 }
 
 type Query {
