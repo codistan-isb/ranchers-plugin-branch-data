@@ -96,4 +96,5 @@ type Query {
   getBranchByName(name: String!): Branch
   getRiderCount(name: String!): Int!
   getBranchByCityName(City: String): [Branch]
+  getAlltaxData: [taxRate]
 }
