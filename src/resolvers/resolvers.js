@@ -4,14 +4,14 @@ import ReactionError from "@reactioncommerce/reaction-error";
 export default {
     Branch: {
         async taxInfo(parent, args, context, info) {
-            console.log("parent", parent);
-            console.log(parent.taxID);
+            // console.log("parent", parent);
+            // console.log(parent.taxID);
             if (parent.taxID) {
                 const { TaxRate } = context.collections;
                 const taxDataResponse = await TaxRate.find({
                     _id: ObjectID.ObjectId(parent.taxID),
                 }).toArray();
-                console.log("Tax Data : ", taxDataResponse[0]);
+                // console.log("Tax Data : ", taxDataResponse[0]);
                 return taxDataResponse[0];
             } else {
                 return [];
@@ -20,7 +20,7 @@ export default {
     },
     Mutation: {
         async createBranch(parent, { input }, context, info) {
-            console.log(context.user);
+            // console.log(context.user);
             // console.log(input)
             if (context.user === undefined || context.user === null) {
                 throw new ReactionError("access-denied", "Please login first");
@@ -30,7 +30,7 @@ export default {
             // console.log(BranchData)
             const { name } = input;
             const isDuplicate = await checkDuplicateBranch(name, BranchData);
-            console.log(isDuplicate);
+            // console.log(isDuplicate);
             if (isDuplicate == false) {
                 throw new ReactionError(
                     "conflict",
@@ -38,7 +38,7 @@ export default {
                 );
                 // throw new ReactionError("A branch with the same name already exists", "Branch Name");
             }
-            console.log(new Date().toISOString());
+            // console.log(new Date().toISOString());
             const newBranch = {
                 ...input,
                 createdAt: new Date().toISOString(),
@@ -48,8 +48,8 @@ export default {
             return result.ops[0];
         },
         async deleteBranch(parent, args, context, info) {
-            console.log(context.user);
-            console.log(args);
+            // console.log(context.user);
+            // console.log(args);
             if (context.user === undefined || context.user === null) {
                 throw new ReactionError("access-denied", "Please login first");
             }
@@ -60,7 +60,7 @@ export default {
             });
 
             // const branch = await BranchData.findOne({ name });
-            console.log("branch", branch);
+            // console.log("branch", branch);
             if (!branch) {
                 throw new ReactionError("not-found", `Branch "${_id} " not found`);
             }
@@ -75,8 +75,8 @@ export default {
             return true;
         },
         async updateBranchData(parent, { _id, input }, context, info) {
-            console.log(context.user);
-            console.log(_id);
+            // console.log(context.user);
+            // console.log(_id);
             if (context.user === undefined || context.user === null) {
                 throw new ReactionError("access-denied", "Please login first");
             }
@@ -85,7 +85,7 @@ export default {
             const branch = await BranchData.findOne({
                 _id: new ObjectID.ObjectId(_id),
             });
-            console.log("Branch Data:- ", branch);
+            // console.log("Branch Data:- ", branch);
             if (!branch) {
                 throw new ReactionError("not-found", `Branch "${_id}" not found`);
             }
@@ -95,12 +95,12 @@ export default {
                 ...input,
                 updatedAt: new Date().toISOString(),
             };
-            console.log("updated Branch Data: ", updatedBranch);
+            // console.log("updated Branch Data: ", updatedBranch);
             const UpdatedBranchDataResp = await BranchData.updateOne(
                 { _id: branch._id },
                 { $set: updatedBranch }
             );
-            console.log(UpdatedBranchDataResp);
+            // console.log(UpdatedBranchDataResp);
             // Ensure that branchname is never null
             if (updatedBranch.name === null) {
                 updatedBranch.name = "";
@@ -109,9 +109,9 @@ export default {
             return updatedBranch;
         },
         async createTax(parent, args, context, info) {
-            console.log("create Tax");
-            console.log("args:- ", args.input);
-            console.log(context.user);
+            // console.log("create Tax");
+            // console.log("args:- ", args.input);
+            // console.log(context.user);
             // console.log(_id)
             if (context.user === undefined || context.user === null) {
                 throw new ReactionError("access-denied", "Please login first");
@@ -122,11 +122,11 @@ export default {
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
             };
-            console.log(createTaxInput);
+            // console.log(createTaxInput);
             const { TaxRate } = context.collections;
-            console.log("Tax Rate ", TaxRate);
+            // console.log("Tax Rate ", TaxRate);
             const createTaxResponse = await TaxRate.insertOne(createTaxInput);
-            console.log("Create Tax Response :- ", createTaxResponse);
+            // console.log("Create Tax Response :- ", createTaxResponse);
             return createTaxResponse.ops[0];
         },
         async updateTax(parent, { _id, Label, Region, Cash, Card }, context, info) {
@@ -147,8 +147,8 @@ export default {
             if (Card) {
                 update.Card = Card;
             }
-            console.log(update);
-            console.log("id:-", filter);
+            // console.log(update);
+            // console.log("id:-", filter);
             const { TaxRate } = context.collections;
             const options = { new: true };
             const updateTaxResponse = await TaxRate.findOneAndUpdate(
@@ -156,7 +156,7 @@ export default {
                 { $set: update },
                 options
             );
-            console.log("Update resp:- ", updateTaxResponse);
+            // console.log("Update resp:- ", updateTaxResponse);
             if (updateTaxResponse.value) {
                 return updateTaxResponse.value;
             } else {
@@ -164,13 +164,13 @@ export default {
             }
         },
         async deleteTax(parent, _id, context, info) {
-            console.log(context.user);
+            // console.log(context.user);
             if (context.user === undefined || context.user === null) {
                 throw new ReactionError("access-denied", "Please login first");
             }
-            console.log(_id._id);
-            const Tax_id = _id._id;
-            console.log(Tax_id);
+            // console.log(_id._id);
+            // const Tax_id = _id._id;
+            // console.log(Tax_id);
             const { BranchData, TaxRate } = context.collections;
             // const branchLinkedWithTax = await BranchData.find({ taxID: { $exists: true } }).toArray();
             const branchLinkedWithTax = await BranchData.find({
@@ -178,7 +178,7 @@ export default {
             }).toArray();
 
             // const branchLinkedWithTax = await BranchData.find({ taxID: Tax_id }).toArray();
-            console.log(" All data resp:- ", branchLinkedWithTax.length);
+            // console.log(" All data resp:- ", branchLinkedWithTax.length);
             if (branchLinkedWithTax.length > 0) {
                 throw new ReactionError(
                     "conflict",
@@ -187,7 +187,7 @@ export default {
             }
             else {
                 const TaxRateDeleteResp = await TaxRate.findOneAndDelete({ _id: new ObjectID.ObjectId(_id._id) });
-                console.log("TaxRateDeleteResp:- ", TaxRateDeleteResp);
+                // console.log("TaxRateDeleteResp:- ", TaxRateDeleteResp);
                 if (TaxRateDeleteResp.value !== null || TaxRateDeleteResp.value !== undefined) {
                     throw new ReactionError("not-found", "Tax region not found");
                 }
@@ -201,8 +201,8 @@ export default {
     },
     Query: {
         branches: async (parent, args, context, info) => {
-            console.log(context.user);
-            console.log(new Date().toISOString());
+            // console.log(context.user);
+            // console.log(new Date().toISOString());
             // if (context.user === undefined || context.user === null) {
             //     throw new Error("Unauthorized access. Please login first");
             // }
@@ -210,23 +210,23 @@ export default {
             const branches = await BranchData.find()
                 .sort({ createdAt: -1 })
                 .toArray();
-            console.log(branches);
+            // console.log(branches);
             const cleanedBranches = branches.map((branch) => ({
                 ...branch,
                 name: branch.name ?? null,
             }));
-            console.log(cleanedBranches);
+            // console.log(cleanedBranches);
             return cleanedBranches;
         },
         async getBranchByName(parent, args, context, info) {
-            console.log(context.user);
+            // console.log(context.user);
             // if (context.user === undefined || context.user === null) {
             //     throw new Error("Unauthorized access. Please login first");
             // }
             const { BranchData } = context.collections;
             const { name } = args;
             const branch = await BranchData.findOne({ name }).sort({ createdAt: -1 });
-            console.log(branch);
+            // console.log(branch);
             // Handle null values for the _id field
             if (!branch) {
                 throw new ReactionError(`Branch "${name}" not found`);
@@ -235,8 +235,8 @@ export default {
             return branch;
         },
         async getRiderCount(parent, args, context, info) {
-            console.log(context.user);
-            console.log(args);
+            // console.log(context.user);
+            // console.log(args);
             // if (context.user === undefined || context.user === null) {
             //     throw new Error("Unauthorized access. Please login first");
             // }
@@ -245,17 +245,17 @@ export default {
             const bracnhRegex = new RegExp(`^${name}$`, "i");
             const roleRegex = new RegExp("^rider$", "i");
             // const db = dataSources.usersAPI.db;
-            console.log(roleRegex);
+            // console.log(roleRegex);
             const usersDetail = await users
                 .find({ name: bracnhRegex, userRole: { $regex: roleRegex } })
                 .sort({ createdAt: -1 })
                 .toArray();
-            console.log(usersDetail);
+            // console.log(usersDetail);
             return usersDetail.length;
         },
         async getBranchByCityName(parent, args, context, info) {
-            console.log(context.user);
-            console.log(args);
+            // console.log(context.user);
+            // console.log(args);
             // if (context.user === undefined || context.user === null) {
             //     throw new Error("Unauthorized access. Please login first");
             // }
@@ -264,7 +264,7 @@ export default {
             const branches = await BranchData.find({ City: City })
                 .sort({ createdAt: -1 })
                 .toArray();
-            console.log(branches);
+            // console.log(branches);
             return branches.map((branch) => ({
                 _id: branch._id,
                 name: branch.name,
@@ -293,7 +293,7 @@ export default {
             // console.log(context.user);
             const { TaxRate } = context.collections;
             const getalltaxRateDataResp = await TaxRate.find().toArray();
-            console.log(getalltaxRateDataResp)
+            // console.log(getalltaxRateDataResp)
             return getalltaxRateDataResp
         },
     },
