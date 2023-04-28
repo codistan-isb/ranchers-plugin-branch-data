@@ -130,11 +130,14 @@ export default {
             return createTaxResponse.ops[0];
         },
         async updateTax(parent, { _id, Label, Region, Cash, Card }, context, info) {
+            const now = new Date();
+
             if (context.user === undefined || context.user === null) {
                 throw new ReactionError("access-denied", "Please login first");
             }
             const filter = { _id: ObjectID.ObjectId(_id) };
             const update = {};
+            update.updatedAt = now;
             if (Label) {
                 update.Label = Label;
             }
