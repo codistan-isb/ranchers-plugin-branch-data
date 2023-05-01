@@ -16,6 +16,7 @@ type Branch {
   deliveryArea: String
   taxID: ID
   taxInfo: taxRate
+  deliveryStatus: Boolean
   # taxRate: taxRateOutput
 }
 
@@ -38,6 +39,8 @@ input UpdateBranchDataInput {
   Timing: String
   deliveryArea: String
   taxID: ID
+  deliveryStatus: Boolean
+
   # taxRate: taxRateInput
 }
 
@@ -55,6 +58,8 @@ input CreateBranchInput {
   Timing: String
   deliveryArea: String
   taxID: ID
+  deliveryStatus: Boolean
+
   # taxRate: taxRateInput
 }
 # input taxRateInput {
