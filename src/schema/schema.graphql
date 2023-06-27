@@ -19,7 +19,17 @@ type Branch {
   deliveryStatus: Boolean
   # taxRate: taxRateOutput
 }
-
+type orderStatReport {
+  totalOrders: Int
+  deliveredOrders: Int
+  canceledOrders: Int
+  rejectedOrders: Int
+  inProcessOrders: Int
+  inQueueOrders: Int
+  inReadyOrders: Int
+  pickedUpOrders: Int
+  confirmedOrders: Int
+}
 # type taxRateOutput {
 #   card: Float
 #   cash: Float
@@ -79,7 +89,11 @@ input taxRateInput {
   Cash: Float
   Card: Float
 }
-
+input orderStatReportInput {
+  branchId: ID!
+  startDate: DateTime
+  endDate: DateTime
+}
 type Mutation {
   createBranch(input: CreateBranchInput!): Branch
   deleteBranch(_id: ID!): Boolean
@@ -102,4 +116,5 @@ type Query {
   getRiderCount(name: String!): Int!
   getBranchByCityName(City: String): [Branch]
   getAlltaxData: [taxRate]
+  getOrderReportStat(input: orderStatReportInput): orderStatReport
 }
