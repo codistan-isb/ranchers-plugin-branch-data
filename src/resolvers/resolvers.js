@@ -419,5 +419,57 @@ export default {
         return [];
       }
     },
+    async getOrderStatusReport(parent, { input }, context, info) {
+      // console.log("input ", input);
+      const { Orders } = context.collections;
+      if (
+        context.user === undefined ||
+        context.user === null ||
+        context.user === ""
+      ) {
+        throw new ReactionError("access-denied", "Please login first");
+      }
+      if (context.user.userRole === "rider") {
+        throw new ReactionError("access-denied", "Unauthorized user");
+      }
+      if (input) {
+        var { branchId, endDate, startDate, status } = input;
+        const filter = {
+          branchID: branchId,
+          "workflow.status": status,
+        };
+        if (startDate || endDate) {
+          if (!filter.updatedAt) {
+            filter.updatedAt = {};
+          }
+          if (startDate && !endDate) {
+            filter.updatedAt.$gte = new Date(startDate);
+            filter.updatedAt.$lte = new Date(startDate);
+          } else if (!startDate && endDate) {
+            filter.updatedAt.$gte = new Date(endDate);
+            filter.updatedAt.$lte = new Date(endDate);
+          } else {
+            filter.updatedAt.$gte = new Date(startDate);
+            filter.updatedAt.$lte = new Date(endDate);
+          }
+        }
+        const count = await Orders.countDocuments(filter);
+        // console.log("count ", count);
+        if (count) {
+          return {
+            totalOrders: count,
+          };
+        } else {
+          return {
+            totalOrders: 0,
+          };
+        }
+      } else {
+        throw new ReactionError(
+          "invalid-argument",
+          "At least one field is required"
+        );
+      }
+    },
   },
 };

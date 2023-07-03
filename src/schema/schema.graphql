@@ -76,6 +76,15 @@ input CreateBranchInput {
 #   card: Float
 #   cash: Float
 # }
+type orderStatusStat {
+  totalOrders: Int
+}
+input orderStatusStatInput {
+  branchId: String!
+  status: OrderStatusValue
+  startDate: DateTime
+  endDate: DateTime
+}
 type taxRate {
   _id: ID
   Label: String
@@ -117,4 +126,5 @@ type Query {
   getBranchByCityName(City: String): [Branch]
   getAlltaxData: [taxRate]
   getOrderReportStat(input: orderStatReportInput): orderStatReport
+  getOrderStatusReport(input: orderStatusStatInput): orderStatusStat
 }
