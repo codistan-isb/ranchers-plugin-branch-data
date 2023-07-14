@@ -166,8 +166,8 @@ export default {
         return null;
       }
     },
-    async deleteTax(parent, _id, context, info) {
-      // console.log(context.user);
+    async deleteTax(parent, { _id }, context, info) {
+      console.log(_id);
       if (context.user === undefined || context.user === null) {
         throw new ReactionError("access-denied", "Please login first");
       }
@@ -177,11 +177,11 @@ export default {
       const { BranchData, TaxRate } = context.collections;
       // const branchLinkedWithTax = await BranchData.find({ taxID: { $exists: true } }).toArray();
       const branchLinkedWithTax = await BranchData.find({
-        taxID: { $eq: Tax_id },
+        taxID: { $eq: _id },
       }).toArray();
 
       // const branchLinkedWithTax = await BranchData.find({ taxID: Tax_id }).toArray();
-      // console.log(" All data resp:- ", branchLinkedWithTax.length);
+      console.log(" All data resp:- ", branchLinkedWithTax.length);
       if (branchLinkedWithTax.length > 0) {
         throw new ReactionError(
           "conflict",
@@ -189,12 +189,12 @@ export default {
         );
       } else {
         const TaxRateDeleteResp = await TaxRate.findOneAndDelete({
-          _id: new ObjectID.ObjectId(_id._id),
+          _id: new ObjectID.ObjectId(_id),
         });
-        // console.log("TaxRateDeleteResp:- ", TaxRateDeleteResp);
+        console.log("TaxRateDeleteResp:- ", TaxRateDeleteResp);
         if (
-          TaxRateDeleteResp.value !== null ||
-          TaxRateDeleteResp.value !== undefined
+          TaxRateDeleteResp.value === null ||
+          TaxRateDeleteResp.value === undefined
         ) {
           throw new ReactionError("not-found", "Tax region not found");
         } else {
