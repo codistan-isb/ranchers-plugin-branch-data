@@ -5,6 +5,7 @@ type Branch {
   phoneNumber1: String
   phoneNumber2: String
   phoneNumber3: String
+  displayName: String
   Latitude: Float
   Longitude: Float
   City: String
@@ -17,7 +18,6 @@ type Branch {
   taxID: ID
   taxInfo: taxRate
   deliveryStatus: Boolean
-  # taxRate: taxRateOutput
 }
 type orderStatReport {
   totalOrders: Int
@@ -30,12 +30,7 @@ type orderStatReport {
   pickedUpOrders: Int
   confirmedOrders: Int
 }
-# type taxRateOutput {
-#   card: Float
-#   cash: Float
-# }
 input UpdateBranchDataInput {
-  # _id: ID!
   name: String
   address: String
   phoneNumber1: String
@@ -50,8 +45,7 @@ input UpdateBranchDataInput {
   deliveryArea: String
   taxID: ID
   deliveryStatus: Boolean
-
-  # taxRate: taxRateInput
+  displayName: String
 }
 
 input CreateBranchInput {
@@ -69,13 +63,8 @@ input CreateBranchInput {
   deliveryArea: String
   taxID: ID
   deliveryStatus: Boolean
-
-  # taxRate: taxRateInput
+  displayName: String
 }
-# input taxRateInput {
-#   card: Float
-#   cash: Float
-# }
 type orderStatusStat {
   totalOrders: Int
 }
@@ -103,11 +92,11 @@ input orderStatReportInput {
   startDate: DateTime
   endDate: DateTime
 }
+
 type Mutation {
   createBranch(input: CreateBranchInput!): Branch
   deleteBranch(_id: ID!): Boolean
   updateBranchData(_id: ID!, input: UpdateBranchDataInput): Branch
-  # updateAdminAccount(UserRole: String): Boolean
   createTax(input: taxRateInput): taxRate
   updateTax(
     _id: ID
