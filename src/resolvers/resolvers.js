@@ -185,7 +185,7 @@ export default {
     },
   },
   Query: {
-    branches: async (parent, args, context, info) => {
+    branchesPagination: async (parent, args, context, info) => {
       try {
         let { collections } = context;
         const { BranchData } = collections;
@@ -207,6 +207,23 @@ export default {
         //   name: branch.name ?? null,
         // }));
         // return cleanedBranches;
+      } catch (error) {
+        console.log("error", error);
+      }
+    },
+    branches: async (parent, args, context, info) => {
+      try {
+        let { collections } = context;
+        const { BranchData } = collections;
+        const { ...connectionArgs } = args;
+        const branches = await BranchData.find()
+          .sort({ createdAt: -1 })
+          .toArray();
+        const cleanedBranches = branches.map((branch) => ({
+          ...branch,
+          name: branch.name ?? null,
+        }));
+        return cleanedBranches;
       } catch (error) {
         console.log("error", error);
       }
@@ -293,6 +310,17 @@ export default {
           includeTotalCount: wasFieldRequested("totalCount", info),
         });
         // return getalltaxRateDataResp;
+      } catch (error) {
+        console.log("error", error);
+      }
+    },
+    async getAlltaxData(parent, args, context, info) {
+      try {
+        let { collections } = context;
+        const { TaxRate } = collections;
+        const { ...connectionArgs } = args;
+        const getAllTaxRateDataResp = await TaxRate.find({}).toArray();
+        return getAllTaxRateDataResp;
       } catch (error) {
         console.log("error", error);
       }

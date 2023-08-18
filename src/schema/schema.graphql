@@ -148,7 +148,7 @@ type Mutation {
 }
 
 type Query {
-  branches(
+  branchesPagination(
     after: ConnectionCursor
     # "Return only results that come before this cursor. Use this with `last` to specify the number of results to return."
     before: ConnectionCursor
@@ -161,6 +161,7 @@ type Query {
     # "Return results sorted in this order"
     sortOrder: SortOrder = asc
   ): BranchConnection!
+  branches: [Branch]
   getBranchByName(name: String!): Branch
   getRiderCount(name: String!): Int!
   getBranchByCityName(City: String): [Branch]
@@ -176,6 +177,7 @@ type Query {
     # "Return only results that come after the Nth result. This parameter may be used with the `first` parameter."
     offset: Int
   ): TaxConnection!
+  getAlltaxData: [taxRate]
   getOrderReportStat(input: orderStatReportInput): orderStatReport
   getOrderStatusReport(input: orderStatusStatInput): orderStatusStat
 }
