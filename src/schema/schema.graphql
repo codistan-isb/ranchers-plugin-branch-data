@@ -1,5 +1,5 @@
-type Branch {
-  _id: ID
+type Branch implements Node {
+  _id: ID!
   name: String
   address: String
   phoneNumber1: String
@@ -74,12 +74,14 @@ input orderStatusStatInput {
   startDate: DateTime
   endDate: DateTime
 }
-type taxRate {
-  _id: ID
+type taxRate implements Node {
+  _id: ID!
   Label: String
   Region: String
   Cash: Float
   Card: Float
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 input taxRateInput {
   Label: String
@@ -92,7 +94,44 @@ input orderStatReportInput {
   startDate: DateTime
   endDate: DateTime
 }
-
+type BranchEdge implements NodeEdge {
+  "The cursor that represents this node in the paginated results"
+  cursor: ConnectionCursor!
+  "The Order Report"
+  node: Branch
+}
+type BranchConnection {
+  "The list of nodes that match the query, wrapped in an edge to provide a cursor string for each"
+  edges: [BranchEdge]
+  """
+  You can request the `nodes` directly to avoid the extra wrapping that `NodeEdge` has,
+  if you know you will not need to paginate the results.
+  """
+  nodes: [Branch]
+  "Information to help a client request the next or previous page"
+  pageInfo: PageInfo!
+  "The total number of nodes that match your query"
+  totalCount: Int!
+}
+type TaxEdge implements NodeEdge {
+  "The cursor that represents this node in the paginated results"
+  cursor: ConnectionCursor!
+  "The Order Report"
+  node: taxRate
+}
+type TaxConnection {
+  "The list of nodes that match the query, wrapped in an edge to provide a cursor string for each"
+  edges: [TaxEdge]
+  """
+  You can request the `nodes` directly to avoid the extra wrapping that `NodeEdge` has,
+  if you know you will not need to paginate the results.
+  """
+  nodes: [taxRate]
+  "Information to help a client request the next or previous page"
+  pageInfo: PageInfo!
+  "The total number of nodes that match your query"
+  totalCount: Int!
+}
 type Mutation {
   createBranch(input: CreateBranchInput!): Branch
   deleteBranch(_id: ID!): Boolean
@@ -109,11 +148,34 @@ type Mutation {
 }
 
 type Query {
-  branches: [Branch]
+  branches(
+    after: ConnectionCursor
+    # "Return only results that come before this cursor. Use this with `last` to specify the number of results to return."
+    before: ConnectionCursor
+    # "Return at most this many results. This parameter may be used with either `after` or `offset` parameters."
+    first: ConnectionLimitInt
+    # "Return at most this many results. This parameter may be used with the `before` parameter."
+    last: ConnectionLimitInt
+    # "Return only results that come after the Nth result. This parameter may be used with the `first` parameter."
+    offset: Int
+    # "Return results sorted in this order"
+    sortOrder: SortOrder = asc
+  ): BranchConnection!
   getBranchByName(name: String!): Branch
   getRiderCount(name: String!): Int!
   getBranchByCityName(City: String): [Branch]
-  getAlltaxData: [taxRate]
+  # getAllTaxData: [taxRate]
+  getAllTaxData(
+    after: ConnectionCursor
+    # "Return only results that come before this cursor. Use this with `last` to specify the number of results to return."
+    before: ConnectionCursor
+    # "Return at most this many results. This parameter may be used with either `after` or `offset` parameters."
+    first: ConnectionLimitInt
+    # "Return at most this many results. This parameter may be used with the `before` parameter."
+    last: ConnectionLimitInt
+    # "Return only results that come after the Nth result. This parameter may be used with the `first` parameter."
+    offset: Int
+  ): TaxConnection!
   getOrderReportStat(input: orderStatReportInput): orderStatReport
   getOrderStatusReport(input: orderStatusStatInput): orderStatusStat
 }
