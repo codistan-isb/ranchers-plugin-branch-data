@@ -38,6 +38,8 @@ export default {
         }
         const newBranch = {
           ...input,
+          isDeleted: false,
+          isVisible: true,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };
@@ -54,9 +56,13 @@ export default {
       try {
         const { BranchData } = context.collections;
         const { _id } = args;
-        const branch = await BranchData.findOneAndDelete({
-          _id: new ObjectID.ObjectId(_id),
-        });
+        const branch = await BranchData.findOneAndUpdate(
+          {
+            _id: new ObjectID.ObjectId(_id),
+          },
+          { $set: { isDeleted: true } },
+          { new: true }
+        );
         if (!branch) {
           throw new ReactionError("not-found", `Branch "${_id} " not found`);
         }
@@ -105,6 +111,8 @@ export default {
       try {
         const createTaxInput = {
           ...args.input,
+          isDeleted: false,
+          isVisible: true,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };
@@ -167,16 +175,17 @@ export default {
             "Tax ID is already linked with branch, to delete the tax first unlink the branch "
           );
         } else {
-          const TaxRateDeleteResp = await TaxRate.findOneAndDelete({
-            _id: new ObjectID.ObjectId(_id),
-          });
-          if (
-            TaxRateDeleteResp.value === null ||
-            TaxRateDeleteResp.value === undefined
-          ) {
-            throw new ReactionError("not-found", "Tax region not found");
-          } else {
+          const TaxRateDeleteResp = await TaxRate.findOneAndUpdate(
+            {
+              _id: new ObjectID.ObjectId(_id),
+            },
+            { $set: { isDeleted: true } },
+            { new: true }
+          );
+          if (TaxRateDeleteResp) {
             return true;
+          } else {
+            throw new ReactionError("not-found", "Tax region not found");
           }
         }
       } catch (error) {
@@ -190,7 +199,7 @@ export default {
         let { collections } = context;
         const { BranchData } = collections;
         const { ...connectionArgs } = args;
-        const branches = await BranchData.find({});
+        const branches = await BranchData.find({ isDeleted: false });
         return getPaginatedResponse(branches, connectionArgs, {
           includeHasNextPage: wasFieldRequested("pageInfo.hasNextPage", info),
           includeHasPreviousPage: wasFieldRequested(
@@ -216,7 +225,7 @@ export default {
         let { collections } = context;
         const { BranchData } = collections;
         const { ...connectionArgs } = args;
-        const branches = await BranchData.find()
+        const branches = await BranchData.find({ isDeleted: false })
           .sort({ createdAt: -1 })
           .toArray();
         const cleanedBranches = branches.map((branch) => ({
@@ -300,7 +309,7 @@ export default {
         let { collections } = context;
         const { TaxRate } = collections;
         const { ...connectionArgs } = args;
-        const getAllTaxRateDataResp = await TaxRate.find({});
+        const getAllTaxRateDataResp = await TaxRate.find({ isDeleted: false });
         return getPaginatedResponse(getAllTaxRateDataResp, connectionArgs, {
           includeHasNextPage: wasFieldRequested("pageInfo.hasNextPage", info),
           includeHasPreviousPage: wasFieldRequested(
@@ -319,7 +328,9 @@ export default {
         let { collections } = context;
         const { TaxRate } = collections;
         const { ...connectionArgs } = args;
-        const getAllTaxRateDataResp = await TaxRate.find({}).toArray();
+        const getAllTaxRateDataResp = await TaxRate.find({
+          isDeleted: false,
+        }).toArray();
         return getAllTaxRateDataResp;
       } catch (error) {
         console.log("error", error);

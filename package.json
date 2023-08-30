@@ -2,7 +2,7 @@
   "name": "@codistan-isb/ranchers-plugin-branch-data",
   "description": "Boilerplate plugin for the Reaction API",
   "label": "Create Branch Plugin",
-  "version": "6.4.8-development",
+  "version": "6.4.9-development",
   "main": "index.js",
   "type": "module",
   "engines": {
