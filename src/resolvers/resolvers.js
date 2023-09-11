@@ -199,7 +199,11 @@ export default {
         let { collections } = context;
         const { BranchData } = collections;
         const { ...connectionArgs } = args;
-        const branches = await BranchData.find({ isDeleted: false });
+        const branches = await BranchData.find({});
+        // console.log(
+        //   "await BranchData.find({ isDeleted: false })",
+        //   await BranchData.find({}).toArray()
+        // );
         return getPaginatedResponse(branches, connectionArgs, {
           includeHasNextPage: wasFieldRequested("pageInfo.hasNextPage", info),
           includeHasPreviousPage: wasFieldRequested(
@@ -225,7 +229,8 @@ export default {
         let { collections } = context;
         const { BranchData } = collections;
         const { ...connectionArgs } = args;
-        const branches = await BranchData.find({ isDeleted: false })
+        // isDeleted: false
+        const branches = await BranchData.find({})
           .sort({ createdAt: -1 })
           .toArray();
         const cleanedBranches = branches.map((branch) => ({
@@ -309,7 +314,8 @@ export default {
         let { collections } = context;
         const { TaxRate } = collections;
         const { ...connectionArgs } = args;
-        const getAllTaxRateDataResp = await TaxRate.find({ isDeleted: false });
+        // isDeleted: false
+        const getAllTaxRateDataResp = await TaxRate.find({});
         return getPaginatedResponse(getAllTaxRateDataResp, connectionArgs, {
           includeHasNextPage: wasFieldRequested("pageInfo.hasNextPage", info),
           includeHasPreviousPage: wasFieldRequested(
@@ -328,9 +334,8 @@ export default {
         let { collections } = context;
         const { TaxRate } = collections;
         const { ...connectionArgs } = args;
-        const getAllTaxRateDataResp = await TaxRate.find({
-          isDeleted: false,
-        }).toArray();
+        // isDeleted: false,
+        const getAllTaxRateDataResp = await TaxRate.find({}).toArray();
         return getAllTaxRateDataResp;
       } catch (error) {
         console.log("error", error);
