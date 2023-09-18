@@ -30,6 +30,12 @@ type orderStatReport {
   pickedUpOrders: Int
   confirmedOrders: Int
 }
+type riderOrderStatReport {
+  totalOrders: Int
+  deliveredOrders: Int
+  rejectedOrder: Int
+  inProgressOrder: Int
+}
 input UpdateBranchDataInput {
   name: String
   address: String
@@ -179,5 +185,6 @@ type Query {
   ): TaxConnection!
   getAlltaxData: [taxRate]
   getOrderReportStat(input: orderStatReportInput): orderStatReport
+  getRiderOrderReportStat(input: orderStatReportInput): riderOrderStatReport
   getOrderStatusReport(input: orderStatusStatInput): orderStatusStat
 }

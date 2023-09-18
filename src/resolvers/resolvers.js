@@ -341,6 +341,76 @@ export default {
         console.log("error", error);
       }
     },
+    async getRiderOrderReportStat(parent, { input }, context, info) {
+      // console.log("input ", input);
+      const { RiderOrder } = context.collections;
+      if (
+        context.user === undefined ||
+        context.user === null ||
+        context.user === ""
+      ) {
+        throw new ReactionError("access-denied", "Please login first");
+      }
+      if (context.user.userRole === "rider") {
+        throw new ReactionError("access-denied", "Unauthorized user");
+      }
+      try {
+        var matchStage = {};
+
+        if (input) {
+          var { branchId, endDate, startDate } = input;
+          matchStage = {
+            $match: {
+              branches: branchId,
+            },
+          };
+          if (startDate) {
+            matchStage.$match.createdAt = {
+              $gte: new Date(startDate),
+              $lte: endDate ? new Date(endDate) : new Date(),
+            };
+          }
+        } else {
+          throw new ReactionError(
+            "invalid-argument",
+            "At least one field is required"
+          );
+        }
+        // console.log("match stage: ", matchStage);
+        let dataResp = await RiderOrder.aggregate([
+          matchStage,
+          {
+            $group: {
+              _id: null,
+              totalOrders: { $sum: 1 },
+              deliveredOrders: {
+                $sum: {
+                  $cond: [{ $eq: ["$OrderStatus", "delivered"] }, 1, 0],
+                },
+              },
+              rejectedOrder: {
+                $sum: {
+                  $cond: [{ $eq: ["$OrderStatus", "canceled"] }, 1, 0],
+                },
+              },
+              inProgressOrder: {
+                $sum: {
+                  $cond: [{ $eq: ["$OrderStatus", "pickedUp"] }, 1, 0],
+                },
+              },
+            },
+          },
+        ]).toArray();
+        // console.log("dataResp", dataResp);
+        if (dataResp) {
+          return dataResp[0];
+        } else {
+          return null;
+        }
+      } catch (error) {
+        console.log("error", error);
+      }
+    },
     async getOrderReportStat(parent, { input }, context, info) {
       try {
         const { Orders } = context.collections;
@@ -454,6 +524,7 @@ export default {
             },
           },
         ]).toArray();
+        console.log("orderStatResp ", orderStatResp);
         if (orderStatResp[0]) {
           return orderStatResp[0];
         } else {
