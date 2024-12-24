@@ -230,45 +230,51 @@ export default {
         let { collections } = context;
         const { BranchData } = collections;
         const { ...connectionArgs } = args;
-        // isDeleted: false
-        console.log("current branch time")
+    
+        console.log("current branch time");
+    
         const branches = await BranchData.find({})
           .sort({ createdAt: -1 })
           .toArray();
-        const cleanedBranches = branches.map(async (branch) => {
-          if (branch.Timing) {
-            const [startTime, endTime] = branch.Timing.split(" - ").map(time => time.trim());
-
-            console.log("Processing branch:", branch.name);
-            console.log("Start Time:", startTime);
-            console.log("End Time:", endTime);
-
-            // Call the checkIfTime function
-            const isOpen = await checkIfTime(startTime, endTime);
-
-            console.log("Is branch open?", isOpen, "branch.name ", branch.name);
-            if (isOpen) {
+    
+        const processedBranches = await Promise.all(
+          branches.map(async (branch) => {
+            if (branch.Timing) {
+              const [startTime, endTime] = branch.Timing.split(" - ").map((time) => time.trim());
+    
+              console.log("Processing branch:", branch.name);
+              console.log("Start Time:", startTime);
+              console.log("End Time:", endTime);
+    
+              // Call the checkIfTime function
+              const isOpen = await checkIfTime(startTime, endTime);
+    
+              console.log("Is branch open?", isOpen, "branch.name ", branch.name);
+    
               return {
                 ...branch,
-                isOpen
+                isOpen,
+              };
+            } else {
+              console.warn("Timing field is missing for branch:", branch.name);
+              return {
+                ...branch,
+                isOpen: false,
               };
             }
-
-          } else {
-            console.warn("Timing field is missing for branch:", branch.name);
-            return {
-              ...branch,
-              isOpen: false
-            };
-          }
-        });
-        console.log("cleanedBranches ", cleanedBranches)
-
-        return cleanedBranches;
+          })
+        );
+    
+        // Filter out branches where isOpen is false
+        const filteredBranches = processedBranches.filter((branch) => branch.isOpen);
+    
+        console.log("filteredBranches ", filteredBranches);
+    
+        return filteredBranches;
       } catch (error) {
         console.log("error", error);
       }
-    },
+    },    
     async getBranchByName(parent, args, context, info) {
       try {
         const { BranchData } = context.collections;
