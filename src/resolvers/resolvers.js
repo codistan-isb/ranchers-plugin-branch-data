@@ -3,6 +3,7 @@ import checkDuplicateBranch from "../utils/checkDuplicateBranch.js";
 import ReactionError from "@reactioncommerce/reaction-error";
 import getPaginatedResponse from "@reactioncommerce/api-utils/graphql/getPaginatedResponse.js";
 import wasFieldRequested from "@reactioncommerce/api-utils/graphql/wasFieldRequested.js";
+import checkIfTime from "../utils/checkIfTime.js";
 export default {
   Branch: {
     async taxInfo(parent, args, context, info) {
@@ -230,13 +231,39 @@ export default {
         const { BranchData } = collections;
         const { ...connectionArgs } = args;
         // isDeleted: false
+        console.log("current branch time")
         const branches = await BranchData.find({})
           .sort({ createdAt: -1 })
           .toArray();
-        const cleanedBranches = branches.map((branch) => ({
-          ...branch,
-          name: branch.name ?? null,
-        }));
+        const cleanedBranches = branches.map(async (branch) => {
+          if (branch.Timing) {
+            const [startTime, endTime] = branch.Timing.split(" - ").map(time => time.trim());
+
+            console.log("Processing branch:", branch.name);
+            console.log("Start Time:", startTime);
+            console.log("End Time:", endTime);
+
+            // Call the checkIfTime function
+            const isOpen = await checkIfTime(startTime, endTime);
+
+            console.log("Is branch open?", isOpen, "branch.name ", branch.name);
+            if (isOpen) {
+              return {
+                ...branch,
+                isOpen
+              };
+            }
+
+          } else {
+            console.warn("Timing field is missing for branch:", branch.name);
+            return {
+              ...branch,
+              isOpen: false
+            };
+          }
+        });
+        console.log("cleanedBranches ", cleanedBranches)
+
         return cleanedBranches;
       } catch (error) {
         console.log("error", error);
