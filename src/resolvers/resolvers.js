@@ -266,11 +266,11 @@ export default {
         );
     
         // Filter out branches where isOpen is false
-        const filteredBranches = processedBranches.filter((branch) => branch.isOpen);
+        // const filteredBranches = processedBranches.filter((branch) => branch.isOpen==true);
     
-        console.log("filteredBranches ", filteredBranches);
+        // console.log("filteredBranches ", filteredBranches);
     
-        return filteredBranches;
+        return processedBranches;
       } catch (error) {
         console.log("error", error);
       }
