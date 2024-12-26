@@ -236,6 +236,7 @@ export default {
         const branches = await BranchData.find({})
           .sort({ createdAt: -1 })
           .toArray();
+          console.log("branches ",branches)
     
         const processedBranches = await Promise.all(
           branches.map(async (branch) => {
