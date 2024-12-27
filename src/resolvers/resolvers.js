@@ -231,26 +231,26 @@ export default {
         const { BranchData } = collections;
         const { ...connectionArgs } = args;
     
-        console.log("current branch time");
+        // console.log("current branch time");
     
         const branches = await BranchData.find({})
           .sort({ createdAt: -1 })
           .toArray();
-          console.log("branches ",branches)
+          // console.log("branches ",branches)
     
         const processedBranches = await Promise.all(
           branches.map(async (branch) => {
             if (branch.Timing) {
               const [startTime, endTime] = branch.Timing.split(" - ").map((time) => time.trim());
     
-              console.log("Processing branch:", branch.name);
-              console.log("Start Time:", startTime);
-              console.log("End Time:", endTime);
+              // console.log("Processing branch:", branch.name);
+              // console.log("Start Time:", startTime);
+              // console.log("End Time:", endTime);
     
               // Call the checkIfTime function
               const isOpen = await checkIfTime(startTime, endTime);
     
-              console.log("Is branch open?", isOpen, "branch.name ", branch.name);
+              // console.log("Is branch open?", isOpen, "branch.name ", branch.name);
     
               return {
                 ...branch,

@@ -6,8 +6,8 @@ export default async function checkIfTime(startTime, endTime) {
     const pakistanDate = moment().tz('Asia/Karachi'); // Get current Pakistan time
     const currentTime = pakistanDate; // Use the full moment object
 
-    console.log("pakistanDate:", pakistanDate.format());
-    console.log("currentTime:", currentTime.format());
+    // console.log("pakistanDate:", pakistanDate.format());
+    // console.log("currentTime:", currentTime.format());
 
     // Determine if the current time is before 2:00 AM
     const isBefore2AM = currentTime.hours() < 2;
@@ -30,12 +30,12 @@ export default async function checkIfTime(startTime, endTime) {
         endMoment.add(1, 'day');
     }
 
-    console.log("startMoment (adjusted):", startMoment.format());
-    console.log("endMoment (adjusted):", endMoment.format());
+    // console.log("startMoment (adjusted):", startMoment.format());
+    // console.log("endMoment (adjusted):", endMoment.format());
 
     // Check if the current time is within the range
     const isInRange = currentTime.isBetween(startMoment, endMoment, null, '[)');
 
-    console.log("isInRange:", isInRange);
+    // console.log("isInRange:", isInRange);
     return isInRange;
 }
