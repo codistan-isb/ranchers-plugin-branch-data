@@ -4,6 +4,7 @@ import ReactionError from "@reactioncommerce/reaction-error";
 import getPaginatedResponse from "@reactioncommerce/api-utils/graphql/getPaginatedResponse.js";
 import wasFieldRequested from "@reactioncommerce/api-utils/graphql/wasFieldRequested.js";
 import checkIfTime from "../utils/checkIfTime.js";
+import updateSystemTime from "../utils/updateSystemTime.js";
 export default {
   Branch: {
     async taxInfo(parent, args, context, info) {
@@ -81,13 +82,14 @@ export default {
         throw new ReactionError("access-denied", "Please login first");
       }
       try {
-        const { BranchData } = context.collections;
+        const { BranchData, ContentDetail } = context.collections;
         const branch = await BranchData.findOne({
           _id: new ObjectID.ObjectId(_id),
         });
         if (!branch) {
           throw new ReactionError("not-found", `Branch "${_id}" not found`);
         }
+        console.log("input ", input)
         const updatedBranch = {
           ...branch,
           ...input,
@@ -97,6 +99,18 @@ export default {
           { _id: branch._id },
           { $set: updatedBranch }
         );
+        console.log("UpdatedBranchDataResp ",UpdatedBranchDataResp)
+        const allContentDetails = await ContentDetail.find(
+          {},
+        ).toArray();
+        console.log("allContentDetails ", allContentDetails)
+        const allBranchDetails = await BranchData.find(
+          {},
+        ).toArray();
+        console.log("allContentDetails ", allContentDetails)
+        console.log("allBranchDetails ", allBranchDetails)
+        
+        updateSystemTime(allBranchDetails,ContentDetail)
         if (updatedBranch.name === null) {
           updatedBranch.name = "";
         }
@@ -230,28 +244,28 @@ export default {
         let { collections } = context;
         const { BranchData } = collections;
         const { ...connectionArgs } = args;
-    
+
         // console.log("current branch time");
-    
+
         const branches = await BranchData.find({})
           .sort({ createdAt: -1 })
           .toArray();
-          // console.log("branches ",branches)
-    
+        // console.log("branches ",branches)
+
         const processedBranches = await Promise.all(
           branches.map(async (branch) => {
             if (branch.Timing) {
               const [startTime, endTime] = branch.Timing.split(" - ").map((time) => time.trim());
-    
+
               // console.log("Processing branch:", branch.name);
               // console.log("Start Time:", startTime);
               // console.log("End Time:", endTime);
-    
+
               // Call the checkIfTime function
               const isOpen = await checkIfTime(startTime, endTime);
-    
+
               // console.log("Is branch open?", isOpen, "branch.name ", branch.name);
-    
+
               return {
                 ...branch,
                 isOpen,
@@ -265,17 +279,17 @@ export default {
             }
           })
         );
-    
+
         // Filter out branches where isOpen is false
         // const filteredBranches = processedBranches.filter((branch) => branch.isOpen==true);
-    
+
         // console.log("filteredBranches ", filteredBranches);
-    
+
         return processedBranches;
       } catch (error) {
         console.log("error", error);
       }
-    },    
+    },
     async getBranchByName(parent, args, context, info) {
       try {
         const { BranchData } = context.collections;
