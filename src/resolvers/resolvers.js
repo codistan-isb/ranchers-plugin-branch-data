@@ -99,16 +99,16 @@ export default {
           { _id: branch._id },
           { $set: updatedBranch }
         );
-        console.log("UpdatedBranchDataResp ",UpdatedBranchDataResp)
+        // console.log("UpdatedBranchDataResp ",UpdatedBranchDataResp)
         const allContentDetails = await ContentDetail.find(
           {},
         ).toArray();
-        console.log("allContentDetails ", allContentDetails)
+        // console.log("allContentDetails ", allContentDetails)
         const allBranchDetails = await BranchData.find(
           {},
         ).toArray();
-        console.log("allContentDetails ", allContentDetails)
-        console.log("allBranchDetails ", allBranchDetails)
+        // console.log("allContentDetails ", allContentDetails)
+        // console.log("allBranchDetails ", allBranchDetails)
         
         updateSystemTime(allBranchDetails,ContentDetail)
         if (updatedBranch.name === null) {
