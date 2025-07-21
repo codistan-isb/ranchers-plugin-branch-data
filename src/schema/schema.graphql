@@ -18,6 +18,7 @@ type Branch implements Node {
   taxID: ID
   taxInfo: taxRate
   deliveryStatus: Boolean
+  takeAwayStatus: Boolean
 }
 type orderStatReport {
   totalOrders: Int
