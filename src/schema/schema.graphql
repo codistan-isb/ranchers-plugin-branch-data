@@ -53,6 +53,8 @@ input UpdateBranchDataInput {
   taxID: ID
   deliveryStatus: Boolean
   displayName: String
+  
+  takeAwayStatus: Boolean
 }
 
 input CreateBranchInput {
@@ -71,6 +73,8 @@ input CreateBranchInput {
   taxID: ID
   deliveryStatus: Boolean
   displayName: String
+  
+  takeAwayStatus: Boolean
 }
 type orderStatusStat {
   totalOrders: Int
